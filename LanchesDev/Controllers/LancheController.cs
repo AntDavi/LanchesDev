@@ -59,7 +59,6 @@ namespace LanchesDev.Controllers
             }
             return View(lanche);
         }
-<<<<<<< HEAD
 
         public IActionResult Search(string searchString)
         {
@@ -78,7 +77,5 @@ namespace LanchesDev.Controllers
 
             return View("~/Views/Lanche/List.cshtml", new LancheListViewModel { Lanches = lanches, CategoriaAtual = "Todos os lanches" });
         }
-=======
->>>>>>> e08d1b70471f4002fd55b72227e1399e8136fa8a
     }
 }

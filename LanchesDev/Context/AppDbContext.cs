@@ -13,9 +13,9 @@ namespace LanchesDev.Context
         public DbSet<CarrinhoCompraItem> CarrinhoCompraItens { get; set; }
         public DbSet<Pedido> Pedido { get; set; }
         public DbSet<PedidoDetalhe> PedidoDetalhe { get; set; }
-<<<<<<< HEAD
+
         public object Pedidos { get; internal set; }
-=======
->>>>>>> e08d1b70471f4002fd55b72227e1399e8136fa8a
+
+
     }
 }
