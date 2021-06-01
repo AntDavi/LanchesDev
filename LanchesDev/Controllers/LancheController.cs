@@ -59,5 +59,26 @@ namespace LanchesDev.Controllers
             }
             return View(lanche);
         }
+<<<<<<< HEAD
+
+        public IActionResult Search(string searchString)
+        {
+            string _searchString = searchString;
+            IEnumerable<Lanche> lanches;
+            string _categoriaAtual = string.Empty;
+
+            if(string.IsNullOrEmpty(_searchString))
+            {
+                lanches = _lancheRepository.Lanches.OrderBy(l => l.LancheId);
+            }
+            else
+            {
+                lanches = _lancheRepository.Lanches.Where(l => l.Nome.ToLower().Contains(_searchString.ToLower()));
+            }
+
+            return View("~/Views/Lanche/List.cshtml", new LancheListViewModel { Lanches = lanches, CategoriaAtual = "Todos os lanches" });
+        }
+=======
+>>>>>>> e08d1b70471f4002fd55b72227e1399e8136fa8a
     }
 }
