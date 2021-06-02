@@ -1,9 +1,11 @@
 ﻿using LanchesDev.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace LanchesDev.Context
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext : IdentityDbContext<IdentityUser>
     {
         public AppDbContext( DbContextOptions<AppDbContext> options ) : base(options)
         {}
@@ -13,9 +15,9 @@ namespace LanchesDev.Context
         public DbSet<CarrinhoCompraItem> CarrinhoCompraItens { get; set; }
         public DbSet<Pedido> Pedido { get; set; }
         public DbSet<PedidoDetalhe> PedidoDetalhe { get; set; }
-<<<<<<< HEAD
+
         public object Pedidos { get; internal set; }
-=======
->>>>>>> e08d1b70471f4002fd55b72227e1399e8136fa8a
+
+
     }
 }
