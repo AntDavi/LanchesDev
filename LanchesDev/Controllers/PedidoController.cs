@@ -2,6 +2,7 @@
 using LanchesDev.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace LanchesDev.Controllers
 {
@@ -23,31 +24,40 @@ namespace LanchesDev.Controllers
             return View();
         }
 
-        [HttpPost]
-        [Authorize]
         public IActionResult Checkout(Pedido pedido)
         {
-            var itens = _carrinhoCompra.GetCarrinhoCompraItens();
-            _carrinhoCompra.CarrinhoCompraItens = itens;
+            decimal precoTotalPedido = 0.0m;
+            int totalItensPedido = 0;
 
-            if(_carrinhoCompra.CarrinhoCompraItens.Count == 0)
+            List<CarrinhoCompraItem> items = _carrinhoCompra.GetCarrinhoCompraItens();
+
+            _carrinhoCompra.CarrinhoCompraItens = items;
+
+            if (_carrinhoCompra.CarrinhoCompraItens.Count == 0)
             {
-                ModelState.AddModelError("", "Seu carrinho está vazio, inclua um lanche...");
+                ModelState.AddModelError("", "Seu carrinho esta vazio, que tal incluir um lanche...");
             }
 
-            if(ModelState.IsValid)
+            foreach (var item in items)
+            {
+                totalItensPedido += item.Quantidade;
+                precoTotalPedido += (item.Lanche.Preco * item.Quantidade);
+            }
+
+            pedido.TotalItensPedido = totalItensPedido;
+
+            pedido.PedidoTotal = precoTotalPedido;
+
+            if (ModelState.IsValid)
             {
                 _pedidoRepository.CriarPedido(pedido);
 
-                TempData["Cliente"] = pedido.Nome;
-                TempData["NumeroPedido"] = pedido.PedidoId;
-                TempData["DataPedido"] = pedido.PedidoEnviado;
-                TempData["TotalPedido"] = _carrinhoCompra.GetCarrinhoCompraTotal();
+                ViewBag.CheckoutCompletoMensagem = "Obrigado pelo seu pedido :) ";
+                ViewBag.TotalPedido = _carrinhoCompra.GetCarrinhoCompraTotal();
 
                 _carrinhoCompra.LimparCarrinho();
-                return RedirectToAction("CheckoutCompleto");
+                return View("~/Views/Pedido/CheckoutCompleto.cshtml", pedido);
             }
-
             return View(pedido);
         }
 

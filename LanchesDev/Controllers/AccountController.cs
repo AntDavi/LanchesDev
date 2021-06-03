@@ -2,15 +2,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace LanchesDev.Controllers
 {
 
-    [Authorize]
     public class AccountController : Controller
     {
         private readonly UserManager<IdentityUser> _userManager;
@@ -22,8 +19,7 @@ namespace LanchesDev.Controllers
             _signInManager = signManager;
         }
 
-        [HttpGet]
-        public IActionResult Login (string returnUrl)
+        public IActionResult Login(string returnUrl)
         {
             return View(new LoginViewModel()
             {
@@ -32,7 +28,6 @@ namespace LanchesDev.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
         public async Task<IActionResult> Login(LoginViewModel loginVM)
         {
             if (!ModelState.IsValid)
@@ -50,7 +45,7 @@ namespace LanchesDev.Controllers
                     {
                         return RedirectToAction("Index", "Home");
                     }
-                    return RedirectToAction(loginVM.ReturnUrl);
+                    return Redirect(loginVM.ReturnUrl);
                 }
             }
 
@@ -75,17 +70,35 @@ namespace LanchesDev.Controllers
 
                 if(result.Succeeded)
                 {
-                    return RedirectToAction("Index", "Home");
+                    await _userManager.AddToRoleAsync(user, "Member");
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+
+                    return RedirectToAction("LoggedIn", "Account");
                 }
             }
 
             return View(registroVM);
         }
 
+        public ViewResult LoggedIn() => View();
+
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Logout()
         {
+            if (HttpContext.Request.Cookies.Count > 0)
+            {
+                var siteCookies = HttpContext.Request.Cookies
+                                  .Where(c => c.Key.Contains(".AspNetCore.")
+                                  || c.Key.Contains("Microsoft.Authentication"));
+
+                foreach (var cookie in siteCookies)
+                {
+                    Response.Cookies.Delete(cookie.Key);
+                }
+            }
             await _signInManager.SignOutAsync();
+            HttpContext.Session.Clear();
             return RedirectToAction("Index", "Home");
         }
     }
