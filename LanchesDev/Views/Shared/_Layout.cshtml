@@ -6,10 +6,15 @@
     <title>@ViewData["Title"] - LanchesDev</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+    <style>
+        *{
+            list-style: none;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-page="/Index">LanchesDev</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -17,20 +22,29 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
-                        </li>
-                        @await Component.InvokeAsync("CategoriaMenu")
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
-                        </li>
-                        @await Component.InvokeAsync("CarrinhoCompraResumo")
-                    </ul>
+                    <div class="navbar-collapse collapse d-flex justify-content-between">
+                        <div class="d-flex align-items-center">
+
+                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-light" asp-area="" asp-controller="Contato" asp-action="Index">Contato</a>
+
+                            @await Component.InvokeAsync("CategoriaMenu")
+
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <a class="nav-link text-light" asp-area="Admin" asp-controller="Admin" asp-action="Index">Admin</a>
+                            }
+
+                            @if (User.IsInRole("Admin"))
+                            {
+                                @await Component.InvokeAsync("CarrinhoCompraResumo")
+                            }
+                        </div>
+                    </div>
 
                     @await Html.PartialAsync("_LoginPartial")
 
-                    <form class="navbar-form navbar-right" asp-controller="Lanche" asp-action="Search" method="get">
+                    <form class="navbar-form navbar-right d-flex align-items-center" asp-controller="Lanche" asp-action="Search" method="get">
                         <div class="form-group">
                             <input type="text" class="form-control" placeholder="Procurar lanche" name="searchString" value="@ViewData["searchString"]">
                         </div>
